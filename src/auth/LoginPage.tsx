@@ -1,16 +1,31 @@
-import { type FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router';
+import {type FormEvent, useState} from 'react';
+import {useNavigate} from 'react-router';
+import {hasRole, logIn} from "./service";
+import {httpClient} from "../api/http-client";
+
+
 
 export function LoginPage() {
   const navigate = useNavigate();
   const [username, setUsername] = useState('bastien@example.com');
   const [password, setPassword] = useState('tacostacos');
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    // TODO: authenticate against the backend before navigating.
-    navigate('/todos');
+    try{
+      await logIn(username, password);
+      hasRole("ROLE_ADMIN") ? navigate('/todos') : navigate(httpClient.defaults.baseURL + '/');
+
+
+    }catch (error){
+      console.error("Login failed:", error);
+      alert("Login failed. Please check your username and password.");
+      return;
+    }
+
+
+
   }
 
   return (
