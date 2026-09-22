@@ -1,6 +1,7 @@
 import {type FormEvent, useState} from 'react';
 import {useNavigate} from 'react-router';
-import {logIn} from "./service";
+import {hasRole, logIn} from "./service";
+import {httpClient} from "../api/http-client";
 
 
 
@@ -14,7 +15,8 @@ export function LoginPage() {
 
     try{
       await logIn(username, password);
-      navigate('/todos');
+      hasRole("ROLE_ADMIN") ? navigate('/todos') : navigate(httpClient.defaults.baseURL + '/');
+
 
     }catch (error){
       console.error("Login failed:", error);

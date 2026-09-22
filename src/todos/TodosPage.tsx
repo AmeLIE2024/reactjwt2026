@@ -45,7 +45,6 @@ export function TodosPage() {
   }
 
   function logout() {
-
     logOut();
     navigate('/');
   }
