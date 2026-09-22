@@ -3,17 +3,22 @@ import { useNavigate } from 'react-router';
 
 import type { TodoItem } from './todo-item';
 import { createTodo, getTodos } from './todo.service';
-import {logOut} from "../auth/service";
+import {hasRole, logOut} from "../auth/service";
+
 
 export function TodosPage() {
   const navigate = useNavigate();
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [title, setTitle] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isAdmin = hasRole('ROLE_ADMIN');
+
 
   useEffect(() => {
     async function loadTodos() {
+
       try {
+
         setTodos(await getTodos());
       } catch (error) {
         console.error('Unable to load todos', error);
@@ -51,7 +56,9 @@ export function TodosPage() {
 
   return (
     <>
-      <h2>Todos</h2>
+
+        <h2>Todos</h2>
+
 
       <ul>
         {todos.length > 0 ? (
@@ -60,27 +67,28 @@ export function TodosPage() {
           <li>No todo yet.</li>
         )}
       </ul>
+      { isAdmin && (
+        <><h2>Create a new todo item:</h2>
+          <form onSubmit={handleSubmit}>
+            <label>
+              <span>Title: </span>
+              <input
+                autoComplete="off"
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                required/>
+            </label>
 
-      <h2>Create a new todo item:</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          <span>Title: </span>
-          <input
-            autoComplete="off"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            required
-          />
-        </label>
-
-        <button type="submit" disabled={!title.trim() || isSubmitting}>
-          {isSubmitting ? 'Adding…' : 'Add'}
-        </button>
-      </form>
-
+            <button type="submit" disabled={!title.trim() || isSubmitting}>
+              {isSubmitting ? 'Adding…' : 'Add'}
+            </button>
+          </form>
+        </>
+  )}
       <button type="button" onClick={logout}>
         Déconnexion
       </button>
+
     </>
   );
 }

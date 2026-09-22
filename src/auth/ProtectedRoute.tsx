@@ -1,8 +1,16 @@
-import {hasRole} from "./service";
+import type { ReactNode } from 'react';
+import { Navigate } from 'react-router';
 
-export default function router(){
+type ProtectedRouteProps = {
+  children: ReactNode;
+};
 
-  localStorage.getItem('token')
-  hasRole("ROLE_ADMIN") ? window.location.href = '/todos' : window.location.href = '/';
+// Composant qui protège le contenu placé entre ses balises.
+export function ProtectedRoute({ children }: ProtectedRouteProps) {
+  const isAuthenticated = localStorage.getItem('token') !== null;
 
+  if (isAuthenticated) {
+    return children;
+  }
+  return <Navigate to="/" replace />;
 }

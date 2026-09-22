@@ -1,12 +1,10 @@
 import {type FormEvent, useState} from 'react';
-import {useNavigate} from 'react-router';
-import {hasRole, logIn} from "./service";
-import {httpClient} from "../api/http-client";
+import {logIn} from "./service";
 
 
 
 export function LoginPage() {
-  const navigate = useNavigate();
+
   const [username, setUsername] = useState('bastien@example.com');
   const [password, setPassword] = useState('tacostacos');
 
@@ -15,7 +13,8 @@ export function LoginPage() {
 
     try{
       await logIn(username, password);
-      hasRole("ROLE_ADMIN") ? navigate('/todos') : navigate(httpClient.defaults.baseURL + '/');
+      window.location.href = '/todos';
+
 
 
     }catch (error){
